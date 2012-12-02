@@ -1,11 +1,11 @@
 Summary:	Advanced Linux Sound Architecture (ALSA) - Utils
 Name:		alsa-utils
-Version:	1.0.25
+Version:	1.0.26
 Release:	1
 License:	GPL
 Group:		Applications/Sound
 Source0:	ftp://ftp.alsa-project.org/pub/utils/%{name}-%{version}.tar.bz2
-# Source0-md5:	f81f9dcb9a014fd32cb3a70066a5b9a9
+# Source0-md5:	4dcf1017fafc91603af96705c073eca9
 Source1:	alsactl.conf
 Source2:	snd-seq-midi.conf
 URL:		http://www.alsa-project.org/
@@ -38,8 +38,9 @@ This packages contains ALSA command line utilities.
 
 CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure \
-	--disable-alsaconf	\
-	--with-systemdsystemunitdir=%{systemdunitdir}
+	--disable-alsaconf				\
+	--with-systemdsystemunitdir=%{systemdunitdir}	\
+	--with-udev-rules-dir=%{_prefix}/lib/udev/rules.d
 %{__make}
 
 %install
@@ -53,12 +54,12 @@ rm -f $RPM_BUILD_ROOT%{_mandir}/man1/arecord.1
 echo ".so aplay.1" > $RPM_BUILD_ROOT%{_mandir}/man1/arecord.1
 
 install -D %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/alsa/alsactl.conf
-install -D %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/modules-load.d/snd-seq-midi.conf
+install -D %{SOURCE2} $RPM_BUILD_ROOT%{_prefix}/lib/modules-load.d/snd-seq-midi.conf
 
-install -d $RPM_BUILD_ROOT/lib/alsa
-mv $RPM_BUILD_ROOT%{_datadir}/alsa/init $RPM_BUILD_ROOT/lib/alsa
+install -d $RPM_BUILD_ROOT%{_prefix}/lib/alsa
+mv $RPM_BUILD_ROOT%{_datadir}/alsa/init $RPM_BUILD_ROOT%{_prefix}/lib/alsa
 
-ln -s /lib/alsa/init $RPM_BUILD_ROOT%{_datadir}/alsa/init
+ln -s %{_prefix}/lib/alsa/init $RPM_BUILD_ROOT%{_datadir}/alsa/init
 
 %find_lang alsa-utils --all-name
 
@@ -71,8 +72,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %dir %{_datadir}/alsa/init
 %dir /var/lib/alsa
-%dir /lib/alsa
-/lib/alsa/init
+%dir %{_prefix}/lib/alsa
+%{_prefix}/lib/alsa/init
 
 %attr(755,root,root) %{_bindir}/aconnect
 %attr(755,root,root) %{_bindir}/alsaloop
@@ -90,13 +91,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/speaker-test
 %attr(755,root,root) %{_sbindir}/alsactl
 
+%{_prefix}/lib/modules-load.d/snd-seq-midi.conf
+%{_prefix}/lib/udev/rules.d/90-alsa-restore.rules
 %{_sysconfdir}/alsa/alsactl.conf
-%{_sysconfdir}/modules-load.d/snd-seq-midi.conf
 %{systemdunitdir}/alsa-restore.service
 %{systemdunitdir}/alsa-store.service
 %{systemdunitdir}/basic.target.wants/alsa-restore.service
 %{systemdunitdir}/shutdown.target.wants/alsa-store.service
-/lib/udev/rules.d/90-alsa-restore.rules
 
 %{_datadir}/alsa/speaker-test
 %{_datadir}/sounds/alsa
