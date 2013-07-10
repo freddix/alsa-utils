@@ -1,11 +1,11 @@
 Summary:	Advanced Linux Sound Architecture (ALSA) - Utils
 Name:		alsa-utils
-Version:	1.0.27.1
+Version:	1.0.27.2
 Release:	1
 License:	GPL
 Group:		Applications/Sound
 Source0:	ftp://ftp.alsa-project.org/pub/utils/%{name}-%{version}.tar.bz2
-# Source0-md5:	3d81357b997744a139881ef72bc6921a
+# Source0-md5:	b65e9a04181bd7c9db7667a4566f8dc3
 Source1:	alsactl.conf
 Source2:	snd-seq-midi.conf
 URL:		http://www.alsa-project.org/
@@ -92,6 +92,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/alsactl
 
 %{_prefix}/lib/modules-load.d/snd-seq-midi.conf
+%{_prefix}/lib/udev/rules.d/90-alsa-restore.rules
 
 %{_sysconfdir}/alsa/alsactl.conf
 
