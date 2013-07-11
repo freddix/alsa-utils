@@ -1,0 +1,18 @@
+diff -aurN alsa-utils-1.0.27.2.orig/alsactl/Makefile.am alsa-utils-1.0.27.2/alsactl/Makefile.am
+--- alsa-utils-1.0.27.2.orig/alsactl/Makefile.am	2013-07-11 21:59:45.950525814 +0200
++++ alsa-utils-1.0.27.2/alsactl/Makefile.am	2013-07-11 22:01:25.439593486 +0200
+@@ -24,12 +24,12 @@
+ install-data-hook:
+ 	$(MKDIR_P) -m 0755 \
+ 		$(DESTDIR)$(systemdsystemunitdir)/basic.target.wants \
+-		$(DESTDIR)$(systemdsystemunitdir)/shutdown.target.wants
++		$(DESTDIR)$(systemdsystemunitdir)/sysinit.target.wants
+ 	( cd $(DESTDIR)$(systemdsystemunitdir)/basic.target.wants && \
+ 		rm -f alsa-state.service alsa-restore.service && \
+ 		$(LN_S) ../alsa-state.service alsa-state.service && \
+ 		$(LN_S) ../alsa-restore.service alsa-restore.service)
+-	( cd $(DESTDIR)$(systemdsystemunitdir)/shutdown.target.wants && \
++	( cd $(DESTDIR)$(systemdsystemunitdir)/sysinit.target.wants && \
+ 	        rm -f alsa-store.service && \
+ 		$(LN_S) ../alsa-store.service alsa-store.service )
+ 
