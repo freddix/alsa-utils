@@ -1,14 +1,13 @@
-Summary:	Advanced Linux Sound Architecture (ALSA) - Utils
+Summary:	ALSA Utils
 Name:		alsa-utils
-Version:	1.0.27.2
-Release:	2
+Version:	1.0.28
+Release:	1
 License:	GPL
 Group:		Applications/Sound
 Source0:	ftp://ftp.alsa-project.org/pub/utils/%{name}-%{version}.tar.bz2
-# Source0-md5:	b65e9a04181bd7c9db7667a4566f8dc3
+# Source0-md5:	361552d5b1cacd0a1e7ba09e69990211
 Source1:	alsactl.conf
 Source2:	snd-seq-midi.conf
-Patch0:		%{name}-systemd.patch
 URL:		http://www.alsa-project.org/
 BuildRequires:	alsa-lib-devel
 BuildRequires:	autoconf
@@ -25,11 +24,10 @@ Requires:	which
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-This packages contains ALSA command line utilities.
+ALSA command line utilities.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 %{__gettextize}
@@ -37,17 +35,15 @@ This packages contains ALSA command line utilities.
 %{__autoconf}
 %{__autoheader}
 %{__automake}
-
-CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure \
 	--disable-alsaconf				\
 	--with-systemdsystemunitdir=%{systemdunitdir}	\
 	--with-udev-rules-dir=%{_prefix}/lib/udev/rules.d
 %{__make}
+%{__make} -C alsactl 90-alsa-restore.rules
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/alsa
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -55,13 +51,16 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/alsa
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/arecord.1
 echo ".so aplay.1" > $RPM_BUILD_ROOT%{_mandir}/man1/arecord.1
 
-install -D %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/alsa/alsactl.conf
+install -D %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/alsa/alsactl.conf
 install -D %{SOURCE2} $RPM_BUILD_ROOT%{_prefix}/lib/modules-load.d/snd-seq-midi.conf
 
 install -d $RPM_BUILD_ROOT%{_prefix}/lib/alsa
 mv $RPM_BUILD_ROOT%{_datadir}/alsa/init $RPM_BUILD_ROOT%{_prefix}/lib/alsa
 
 ln -s %{_prefix}/lib/alsa/init $RPM_BUILD_ROOT%{_datadir}/alsa/init
+
+install alsactl/90-alsa-restore.rules \
+	$RPM_BUILD_ROOT%{_prefix}/lib/udev/rules.d/90-alsa-restore.rules
 
 %find_lang alsa-utils --all-name
 
@@ -92,21 +91,18 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/iecset
 %attr(755,root,root) %{_bindir}/speaker-test
 %attr(755,root,root) %{_sbindir}/alsactl
+%{_datadir}/alsa/speaker-test
+%{_datadir}/sounds/alsa
+%{_datadir}/alsa/alsactl.conf
 
 %{_prefix}/lib/modules-load.d/snd-seq-midi.conf
 %{_prefix}/lib/udev/rules.d/90-alsa-restore.rules
-
-%{_sysconfdir}/alsa/alsactl.conf
-
 %{systemdunitdir}/basic.target.wants/alsa-restore.service
 %{systemdunitdir}/basic.target.wants/alsa-state.service
-%{systemdunitdir}/sysinit.target.wants/alsa-store.service
+%{systemdunitdir}/shutdown.target.wants/alsa-store.service
 %{systemdunitdir}/alsa-restore.service
 %{systemdunitdir}/alsa-state.service
 %{systemdunitdir}/alsa-store.service
-
-%{_datadir}/alsa/speaker-test
-%{_datadir}/sounds/alsa
 
 %{_mandir}/man1/aconnect.1*
 %{_mandir}/man1/alsactl.1*
