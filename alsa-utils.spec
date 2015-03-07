@@ -1,11 +1,11 @@
 Summary:	ALSA Utils
 Name:		alsa-utils
-Version:	1.0.28
+Version:	1.0.29
 Release:	1
 License:	GPL
 Group:		Applications/Sound
 Source0:	ftp://ftp.alsa-project.org/pub/utils/%{name}-%{version}.tar.bz2
-# Source0-md5:	361552d5b1cacd0a1e7ba09e69990211
+# Source0-md5:	6b289bf874c4c9a63f4b3973093dd404
 Source1:	alsactl.conf
 Source2:	snd-seq-midi.conf
 URL:		http://www.alsa-project.org/
